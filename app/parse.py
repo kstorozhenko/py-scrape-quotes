@@ -15,7 +15,7 @@ class Quote:
     tags: list[str]
 
 
-def get_all_quotes():
+def get_all_quotes() -> list[Quote]:
     all_quotes = []
     url = BASE_URL
     while url:
@@ -24,8 +24,14 @@ def get_all_quotes():
         quotes_div = soup.find_all("div", class_="quote")
         for quote_div in quotes_div:
             text = quote_div.find("span", class_="text").get_text(strip=True)
-            author = quote_div.find("small", class_="author").get_text(strip=True)
-            tags = [tag.get_text(strip=True) for tag in quote_div.find_all("a", class_="tag")]
+            author = quote_div.find(
+                "small",
+                class_="author"
+            ).get_text(strip=True)
+            tags = [
+                tag.get_text(strip=True)
+                for tag in quote_div.find_all("a", class_="tag")
+            ]
             quote = Quote(text, author, tags)
             all_quotes.append(quote)
         next_page = soup.find("li", class_="next")
@@ -33,7 +39,7 @@ def get_all_quotes():
     return all_quotes
 
 
-def write_quotes_to_csv(quotes, output_csv_path):
+def write_quotes_to_csv(quotes: list[Quote], output_csv_path: str) -> None:
     with open(output_csv_path, "w", newline="", encoding="utf-8") as file:
         csv_writer = csv.writer(file)
         csv_writer.writerow(["text", "author", "tags"])
